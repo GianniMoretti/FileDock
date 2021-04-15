@@ -1,5 +1,5 @@
 from PyQt5.QtCore    import Qt, QSize
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QWidget, QPushButton, QGridLayout, QFileDialog)
+from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QWidget, QPushButton, QGridLayout, QFileDialog, QSpacerItem,QSizePolicy)
 from PyQt5 import QtGui
 import os
 
@@ -8,14 +8,23 @@ import folderbutton as fb
 
 class FileDock(QDialog):
 
-    def __init__(self, height, *args, **kwargs):
+    def __init__(self, screenheight, screenwidth, *args, **kwargs):
         super(FileDock, self).__init__(*args, **kwargs)
         self.setObjectName('FileDock_Dialog')
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setStyleSheet(style.Stylesheet)
-        posy = height / 2 - 450
-        self.setGeometry(0, posy, 100, 900)
+        self.side = 'left'
+        self.screenheight = screenheight
+        self.screenwidth = screenwidth
+
+        posy = screenheight / 2 - 450
+        if self.side == 'right':
+            posx = screenwidth - 110
+        else:
+            posx = 0
+
+        self.setGeometry(posx, posy, 100, 900)
         self.folderNumber = 0
         self.maxFolderNumber = 8
         self.folderButtons = []
@@ -31,13 +40,18 @@ class FileDock(QDialog):
         layout = QGridLayout(self.widget)
         self.layout = layout
         self.mousePassed = False
-
         self.setMouseTracking(True)
 
         b = QPushButton('', self, clicked=self.addButtonPush, objectName='NewFolderButton')
         b.setIconSize(QSize(50,50))
         b.setIcon(QtGui.QIcon('assets/addIcon.png'))
         self.layout.addWidget(b, 0, 0, alignment=Qt.AlignTop)
+
+        b = QPushButton('', self, clicked=self.switchSide, objectName='SwitchButton')
+        b.setIconSize(QSize(25,20))
+        b.setFixedSize(25,20)
+        b.setIcon(QtGui.QIcon('assets/biArrow.png'))
+        self.layout.addWidget(b, 9, 0, alignment=Qt.AlignBottom)
 
         b = QPushButton('', self, clicked=self.close, objectName='closeButton')
         b.setIconSize(QSize(50,50))
@@ -79,13 +93,16 @@ class FileDock(QDialog):
         os.system('xdg-open "%s"' % path)
         self.switchDock()
 
-
     def mouseMoveEvent(self, e):
         x = e.x()
         y = e.y()
 
-        if x > 90:
-            self.switchDock()
+        if self.side == 'right':
+            if x < 15:
+                self.switchDock()
+        else:
+            if x > 90:
+                self.switchDock()
 
     def switchDock(self):
         self.filedockclose.show()
@@ -111,12 +128,29 @@ class FileDock(QDialog):
             x.layoutPosition = i + 1
             self.layout.addWidget(x, i + 1, 0, alignment=Qt.AlignCenter)
         
-
     def sortFileButtonsList(self):
         self.folderButtons.sort(key= self.calculateFolderButtonValue, reverse=True)
 
     def calculateFolderButtonValue(self, button):
         return 0.7 * button.folderNumber + 0.3 * button.clickCount
+
+    def switchSide(self):
+        self.filedockclose.switchSide()
+        self.switchDock()
+
+        if self.side == 'left':
+            self.side = 'right'
+            posx = self.screenwidth - 110
+
+        else:
+            self.side = 'left'
+            posx = 0 
+
+        posy = self.screenheight / 2 - 450
+        self.move(posx, posy)
+
+
+
 
 
 
