@@ -1,6 +1,7 @@
 from PyQt5.QtCore    import Qt, QSize
 from PyQt5.QtWidgets import QToolButton
 from PyQt5 import QtGui
+import os
 
 import filedockstylesheet as style
 
@@ -18,6 +19,7 @@ class FolderButton(QToolButton):
         self.setObjectName('FolderButton')
         self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.setIconSize(QSize(50,50))
-        self.setIcon(QtGui.QIcon('assets/folderIcon.png'))
+        path = os.path.join(os.getcwd(), 'source', 'assets', 'folderIcon.png')
+        self.setIcon(QtGui.QIcon(path))
         self.setText(self.folderName)
         self.released.connect(clicked)

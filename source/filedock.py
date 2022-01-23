@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QWidget, QPushButton, QGridLa
 from PyQt5 import QtGui
 import os
 
+from numpy import source
+
 import filedockstylesheet as style
 import folderbutton as fb
 
@@ -44,18 +46,21 @@ class FileDock(QDialog):
 
         b = QPushButton('', self, clicked=self.addButtonPush, objectName='NewFolderButton')
         b.setIconSize(QSize(50,50))
-        b.setIcon(QtGui.QIcon('assets/addIcon.png'))
+        path = os.path.join(os.getcwd(), 'source', 'assets', 'addIcon.png')
+        b.setIcon(QtGui.QIcon(path))
         self.layout.addWidget(b, 0, 0, alignment=Qt.AlignTop)
 
         b = QPushButton('', self, clicked=self.switchSide, objectName='SwitchButton')
         b.setIconSize(QSize(25,20))
         b.setFixedSize(25,20)
-        b.setIcon(QtGui.QIcon('assets/biArrow.png'))
+        path = os.path.join(os.getcwd(), 'source', 'assets', 'biArrow.png')
+        b.setIcon(QtGui.QIcon(path))
         self.layout.addWidget(b, 9, 0, alignment=Qt.AlignBottom)
 
         b = QPushButton('', self, clicked=self.close, objectName='closeButton')
         b.setIconSize(QSize(50,50))
-        b.setIcon(QtGui.QIcon('assets/closeIcon.png'))
+        path = os.path.join(os.getcwd(), 'source', 'assets', 'closeIcon.png')
+        b.setIcon(QtGui.QIcon(path))
         self.layout.addWidget(b, 9, 0, alignment=Qt.AlignBottom)
 
     def folderButtonPush(self):
