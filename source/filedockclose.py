@@ -1,24 +1,22 @@
-from PyQt5.QtCore    import Qt, QSize
-from PyQt5.QtWidgets import (QDialog, QWidget)
-from PyQt5 import QtGui
-import os
+from PyQt6.QtCore    import Qt
+from PyQt6.QtWidgets import (QDialog, QWidget)
+from PyQt6.QtGui import QMouseEvent
 
 import filedockstylesheet as style
-import folderbutton as fb
 
 class FileDockClose(QDialog):
 
     def __init__(self, screenHeight, screenWidth, *args, **kwargs):
         super(FileDockClose, self).__init__(*args, **kwargs)
         self.setObjectName('FileDockClose_Dialog')
-        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         self.setStyleSheet(style.Stylesheet)
         self.side = 'left'
         self.screenWidth = screenWidth
         self.screenHeight = screenHeight
 
-        posy = screenHeight / 2 - 440
+        posy = int(screenHeight / 2 - 440)
         if self.side == 'right':
             posx = screenWidth - 20
         else:
@@ -36,16 +34,17 @@ class FileDockClose(QDialog):
 
         self.widget.setMouseTracking(True)
 
-    def mouseMoveEvent(self, e):
-        x = e.x()
-        y = e.y()
+    def mouseMoveEvent(self, e: QMouseEvent):
+        pos = e.position()
+        x = pos.x()
+        y = pos.y()
 
         if self.side == 'right':
             if x > 0:
                 self.switchDock()
         else:
             if x < 20:
-                self.switchDock()      
+                self.switchDock()   
 
     def setFileDock(self, filedock):
         self.filedock = filedock
@@ -64,7 +63,7 @@ class FileDockClose(QDialog):
 
         self.setStyleSheet(style.Stylesheet)
         
-        posy = self.screenHeight / 2 - 440
+        posy = int(self.screenHeight / 2 - 440)
         if self.side == 'right':
             posx = self.screenWidth - 20
         else:

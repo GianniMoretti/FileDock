@@ -1,9 +1,10 @@
-from PyQt5.QtCore    import Qt, QSize
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QWidget, QPushButton, QGridLayout, QFileDialog, QSpacerItem,QSizePolicy)
-from PyQt5 import QtGui
+from PyQt6.QtCore    import Qt, QSize
+from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QWidget, QPushButton, QGridLayout, QFileDialog, QSpacerItem,QSizePolicy)
+from PyQt6 import QtGui
 import os
+from PyQt6.QtGui import QMouseEvent
 
-from numpy import source
+#from numpy import source
 
 import filedockstylesheet as style
 import folderbutton as fb
@@ -13,14 +14,14 @@ class FileDock(QDialog):
     def __init__(self, screenheight, screenwidth, *args, **kwargs):
         super(FileDock, self).__init__(*args, **kwargs)
         self.setObjectName('FileDock_Dialog')
-        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         self.setStyleSheet(style.Stylesheet)
         self.side = 'left'
         self.screenheight = screenheight
         self.screenwidth = screenwidth
 
-        posy = screenheight / 2 - 450
+        posy = int(screenheight / 2 - 450)
         if self.side == 'right':
             posx = screenwidth - 110
         else:
@@ -48,20 +49,20 @@ class FileDock(QDialog):
         b.setIconSize(QSize(50,50))
         path = os.path.join(os.getcwd(), 'source', 'assets', 'addIcon.png')
         b.setIcon(QtGui.QIcon(path))
-        self.layout.addWidget(b, 0, 0, alignment=Qt.AlignTop)
+        self.layout.addWidget(b, 0, 0, alignment=Qt.AlignmentFlag.AlignTop)
 
         b = QPushButton('', self, clicked=self.switchSide, objectName='SwitchButton')
         b.setIconSize(QSize(25,20))
         b.setFixedSize(25,20)
         path = os.path.join(os.getcwd(), 'source', 'assets', 'biArrow.png')
         b.setIcon(QtGui.QIcon(path))
-        self.layout.addWidget(b, 9, 0, alignment=Qt.AlignBottom)
+        self.layout.addWidget(b, 9, 0, alignment=Qt.AlignmentFlag.AlignBottom)
 
         b = QPushButton('', self, clicked=self.close, objectName='closeButton')
         b.setIconSize(QSize(50,50))
         path = os.path.join(os.getcwd(), 'source', 'assets', 'closeIcon.png')
         b.setIcon(QtGui.QIcon(path))
-        self.layout.addWidget(b, 9, 0, alignment=Qt.AlignBottom)
+        self.layout.addWidget(b, 9, 0, alignment=Qt.AlignmentFlag.AlignBottom)
 
     def folderButtonPush(self):
         sending_button = self.sender()
@@ -71,14 +72,14 @@ class FileDock(QDialog):
         os.system('xdg-open "%s"' % sending_button.path)
 
     def addButtonPush(self):
-        path = str(QFileDialog.getExistingDirectory(None, "Select Directory", os.path.expanduser('~') ,QFileDialog.ShowDirsOnly))
+        path = str(QFileDialog.getExistingDirectory(None, "Select Directory", os.path.expanduser('~') ,QFileDialog.Option.ShowDirsOnly))
 
         if path == "":
             return
 
         if self.folderNumber != self.maxFolderNumber:
             b = fb.FolderButton(self.folderNumber, self.folderNumber + 1, path, self.folderButtonPush, self)
-            self.layout.addWidget(b, self.folderNumber + 1, 0, alignment=Qt.AlignCenter)
+            self.layout.addWidget(b, self.folderNumber + 1, 0, alignment=Qt.AlignmentFlag.AlignCenter)
             self.folderButtons.append(b)
             self.folderNumber = self.folderNumber + 1
             self.sortFileButtonsList()
@@ -90,7 +91,7 @@ class FileDock(QDialog):
             
             self.updateFileButtonNumber()
             b = fb.FolderButton(self.maxFolderNumber , layoutPosition, path, self.folderButtonPush, self)
-            self.layout.addWidget(b, layoutPosition, 0, alignment=Qt.AlignCenter)
+            self.layout.addWidget(b, layoutPosition, 0, alignment=Qt.AlignmentFlag.AlignCenter)
             self.folderButtons.append(b)
             self.sortFileButtonsList()
             self.updateFolderButtonLayout()
@@ -98,9 +99,10 @@ class FileDock(QDialog):
         os.system('xdg-open "%s"' % path)
         self.switchDock()
 
-    def mouseMoveEvent(self, e):
-        x = e.x()
-        y = e.y()
+    def mouseMoveEvent(self, e: QMouseEvent):
+        pos = e.position()
+        x = pos.x()
+        y = pos.y()
 
         if self.side == 'right':
             if x < 15:
@@ -131,7 +133,7 @@ class FileDock(QDialog):
         for i in range(0, self.folderNumber):
             x = self.folderButtons[i]
             x.layoutPosition = i + 1
-            self.layout.addWidget(x, i + 1, 0, alignment=Qt.AlignCenter)
+            self.layout.addWidget(x, i + 1, 0, alignment=Qt.AlignmentFlag.AlignCenter)
         
     def sortFileButtonsList(self):
         self.folderButtons.sort(key= self.calculateFolderButtonValue, reverse=True)
@@ -151,7 +153,7 @@ class FileDock(QDialog):
             self.side = 'left'
             posx = 0 
 
-        posy = self.screenheight / 2 - 450
+        posy = int(self.screenheight / 2 - 450)
         self.move(posx, posy)
 
 

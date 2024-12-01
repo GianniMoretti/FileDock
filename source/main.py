@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore    import Qt, QTimer
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore    import Qt, QTimer
 
 import filedockclose as fdc      
 import filedock as fd
@@ -14,5 +14,5 @@ if __name__ == '__main__':
     c = fdc.FileDockClose(height, width)
     o.setFileDockClose(c)
     c.setFileDock(o)
-    c.exec_()
-    sys.exit(app.exec_())
+    c.show()
+    sys.exit(app.exec())
